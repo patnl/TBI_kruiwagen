@@ -3,6 +3,7 @@
     "mode": "app",
     "app": {
       "name": "Dalux",
+      "useModule": true,
       "exeCandidates": [
         "C:\\Program Files\\Dalux\\Dalux.exe",
         "C:\\Program Files (x86)\\Dalux\\Dalux.exe"
@@ -10,7 +11,10 @@
     },
     "fallback": {
       "mode": "edge",
-      "url": "file:///C:/Kiosk/start.html"
+      "edge": {
+        "url": "file:///C:/Kiosk/start.html",
+        "args": "--edge-kiosk-type=fullscreen --no-first-run"
+      }
     }
   }
 }

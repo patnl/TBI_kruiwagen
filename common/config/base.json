@@ -1,0 +1,36 @@
+{
+  "repo": "patnl/TBI_kruiwagen",
+  "branch": "main",
+
+  "paths": {
+    "baseDir": "C:\\Kiosk",
+    "updateDir": "C:\\Kiosk\\updates",
+    "logDir": "C:\\TBI\\KioskLogs",
+    "statusFile": "C:\\Kiosk\\machine_status.json",
+    "tokenFile": "C:\\Kiosk\\github_pat.enc"
+  },
+
+  "sync": [
+    { "path": "version.txt", "dest": "C:\\Kiosk\\version.txt" },
+
+    { "pathTemplate": "companies/{Company}/portal/start.html", "dest": "C:\\Kiosk\\start.html", "optional": true },
+    { "pathTemplate": "companies/{Company}/portal/Logo_TBI_RGB.png", "dest": "C:\\Kiosk\\Logo_TBI_RGB.png", "optional": true },
+
+    { "path": "common/portal/start.html", "dest": "C:\\Kiosk\\start.html", "optional": true },
+    { "path": "common/portal/Logo_TBI_RGB.png", "dest": "C:\\Kiosk\\Logo_TBI_RGB.png", "optional": true }
+  ],
+
+
+  "startup": {
+    "mode": "edge",
+    "edge": {
+      "url": "file:///C:/Kiosk/start.html",
+      "args": "--edge-kiosk-type=fullscreen --no-first-run"
+    }
+  },
+
+  "heartbeat": {
+    "enabled": true,
+    "csvPath": "fleet_status.csv"
+  }
+}
