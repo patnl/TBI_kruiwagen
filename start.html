@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TBI Kiosk</title>
+
+<style>
+  :root {
+    --tbi-purple: #630d80;
+    --tbi-green: #c1e62e;
+    --bg-dark: #0b0b12;
+    --bg-card: #161623;
+    --text-main: #ffffff;
+    --text-muted: #b3b3b3;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: Verdana, Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 40px;
+    text-align: center;
+  }
+
+  header {
+    margin-bottom: 40px;
+  }
+
+  header img {
+    max-width: 220px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 36px;
+    margin: 0;
+    color: var(--tbi-green);
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-size: 18px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 40px;
+    margin-top: 40px;
+  }
+
+  .company {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    background: var(--tbi-purple);
+    color: white;
+    padding: 20px;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.1s ease, background 0.1s ease;
+  }
+
+  .btn:hover {
+    background: #7a1fa3;
+    transform: scale(1.02);
+  }
+
+  footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <!-- lokaal of GitHub -->
+    <img src="Logo_TBI_RGB.png" alt="TBI logo">
+    <h1>TBI Kiosk</h1>
+    <div class="subtitle">Selecteer de werkmaatschappij</div>
+  </header>
+
+  <div class="card">
+    <div class="company" id="currentCompany">Geen selectie</div>
+
+    <div class="buttons">
+      <div class="btn" onclick="selectCompany('HZB')">HZB</div>
+      <div class="btn" onclick="selectCompany('ERA')">ERA</div>
+      <div class="btn" onclick="selectCompany('JPE')">JPE</div>
+      <div class="btn" onclick="selectCompany('CWD')">CWD</div>
+      <div class="btn" onclick="selectCompany('KPM')">KPM</div>
+      <div class="btn" onclick="selectCompany('TBI')">TBI</div>
+    </div>
+  </div>
+
+  <footer>
+    <div id="status">Offline modus mogelijk</div>
+  </footer>
+
+</div>
+
+<script>
+  const STORAGE_KEY = "tbi_kiosk_company";
+
+  function selectCompany(name) {
+    localStorage.setItem(STORAGE_KEY, name);
+    updateView();
+  }
+
+  function updateView() {
+    const company = localStorage.getItem(STORAGE_KEY);
+    document.getElementById("currentCompany").innerText =
+      company ? company : "Geen selectie";
+  }
+
+  updateView();
+</script>
+
+</body>
+</html>
