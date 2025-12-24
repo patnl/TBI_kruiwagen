@@ -1,0 +1,16 @@
+{
+  "startup": {
+    "mode": "app",
+    "app": {
+      "name": "Dalux",
+      "exeCandidates": [
+        "C:\\Program Files\\Dalux\\Dalux.exe",
+        "C:\\Program Files (x86)\\Dalux\\Dalux.exe"
+      ]
+    },
+    "fallback": {
+      "mode": "edge",
+      "url": "file:///C:/Kiosk/start.html"
+    }
+  }
+}
