@@ -6,77 +6,116 @@
 <title>TBI Kiosk</title>
 
 <style>
-  :root {
-    --tbi-purple: #630d80;
-    --tbi-green: #c1e62e;
-    --bg-dark: #0b0b12;
-    --bg-card: #161623;
-    --text-main: #ffffff;
-    --text-muted: #b3b3b3;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg-dark);
-    color: var(--text-main);
-    font-family: Verdana, Arial, sans-serif;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .container {
-    width: 100%;
-    max-width: 1000px;
-    padding: 40px;
-    text-align: center;
-  }
-  header { margin-bottom: 40px; }
-  header img { max-width: 220px; margin-bottom: 20px; }
-  h1 { font-size: 36px; margin: 0; color: var(--tbi-green); }
-  .subtitle { color: var(--text-muted); margin-top: 10px; font-size: 18px; }
+:root {
+  --tbi-purple:#630d80;
+  --tbi-green:#c1e62e;
+  --bg-dark:#0b0b12;
+  --bg-card:#161623;
+  --text-main:#ffffff;
+  --text-muted:#b3b3b3;
+}
 
-  .card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 40px;
-    margin-top: 40px;
-  }
-  .company { font-size: 28px; font-weight: bold; margin-bottom: 20px; }
+* { box-sizing:border-box; }
 
-  .buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-  }
-  .btn {
-    background: var(--tbi-purple);
-    color: white;
-    padding: 20px;
-    font-size: 18px;
-    border-radius: 12px;
-    cursor: pointer;
-    user-select: none;
-    transition: transform 0.1s ease, filter 0.1s ease;
-  }
-  .btn:hover { filter: brightness(1.08); transform: scale(1.02); }
+body {
+  margin:0;
+  background:var(--bg-dark);
+  color:var(--text-main);
+  font-family:Verdana,Arial,sans-serif;
+  min-height:100vh;
+}
 
-  footer { margin-top: 40px; font-size: 14px; color: var(--text-muted); }
+.container {
+  max-width:1000px;
+  margin:0 auto;
+  padding:40px;
+  text-align:center;
+}
+
+/* HEADER */
+header {
+  margin-bottom:30px;
+}
+
+h1 {
+  font-size:36px;
+  margin:0;
+  color:var(--tbi-green);
+}
+
+.subtitle {
+  color:var(--text-muted);
+  margin-top:10px;
+  font-size:18px;
+}
+
+/* LOGO */
+.logo-box {
+  height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:20px;
+}
+
+.logo-box img {
+  max-width:420px;
+  max-height:200px;
+}
+
+/* CARD */
+.card {
+  background:var(--bg-card);
+  border-radius:16px;
+  padding:40px;
+}
+
+.company {
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:25px;
+}
+
+.buttons {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:20px;
+}
+
+.btn {
+  background:var(--tbi-purple);
+  color:white;
+  padding:20px;
+  font-size:18px;
+  border-radius:12px;
+  cursor:pointer;
+  user-select:none;
+}
+
+.btn:active {
+  transform:scale(0.97);
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
+  <!-- HEADER -->
   <header>
-    <img src="Logo_TBI_RGB.png" alt="TBI logo" onerror="this.style.display='none'">
-    <h1>TBI Kiosk | <span id="comp">Selecteer...</span></h1>
+    <h1>TBI Kiosk | <span id="headerCompany">TBI</span></h1>
     <div class="subtitle">Selecteer de werkmaatschappij</div>
   </header>
 
+  <!-- LOGO -->
+  <div class="logo-box">
+    <img id="logo" alt="Bedrijfslogo">
+  </div>
+
+  <!-- CARD + BUTTONS -->
   <div class="card">
-    <div class="company" id="currentCompany">Geen selectie</div>
+    <div class="company" id="currentCompany">TBI</div>
 
     <div class="buttons">
       <div class="btn" onclick="save('HZB')">HZB</div>
@@ -88,27 +127,31 @@
     </div>
   </div>
 
-  <footer>
-    <div id="status">Offline modus mogelijk</div>
-  </footer>
-
 </div>
 
 <script>
-  const STORAGE_KEY = "tbi_kiosk_company";
+const LOGOS = {
+  TBI: "logos/tbi.png",
+  HZB: "logos/hazenberg.png",
+  ERA: "logos/eracontour.png",
+  JPE: "logos/jpvanesteren.png",
+  CWD: "logos/croonwolterendros.png",
+  KPM: "logos/koopmans.png"
+};
 
-  function save(name) {
-    localStorage.setItem(STORAGE_KEY, name);
-    updateView();
-  }
+function save(company) {
+  const logo = LOGOS[company];
+  if (!logo) return;
 
-  function updateView() {
-    const company = localStorage.getItem(STORAGE_KEY);
-    document.getElementById("currentCompany").innerText = company ? company : "Geen selectie";
-    document.getElementById("comp").innerText = company ? company : "Geen profiel";
-  }
+  document.getElementById("logo").src = logo;
+  document.getElementById("currentCompany").innerText = company;
+  document.getElementById("headerCompany").innerText = company;
+}
 
-  updateView();
+// standaard logo
+window.onload = () => {
+  save("TBI");
+};
 </script>
 
 </body>
