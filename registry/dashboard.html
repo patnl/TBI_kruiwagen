@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBI Kruiwagen — Device Register</title>
+<style>
+  /* ──── TBI HUISSTIJL (uit merkportaal) ──────────────────────────── */
+  :root {
+    /* Groepskleuren */
+    --tbi-paars:      #630d80;
+    --tbi-groen:      #c1e62e;
+    --tbi-cta:        #a816d9;
+    /* Steunkleuren (voor binnenwerken — dashboard is intern) */
+    --tbi-blauw:      #1489cc;
+    --tbi-cyaan:      #2fb2eb;
+    --tbi-aqua:       #26bdbd;
+    --tbi-koudgrijs:  #768694;
+    --tbi-rood:       #f26457;
+    --tbi-warmgeel:   #ffae0d;
+    /* Ondersteunende */
+    --tbi-zwart:      #404040;
+    --tbi-donkergrijs:#999999;
+    --tbi-middengrijs:#cccccc;
+    --tbi-lichtgrijs: #f5f5f5;
+
+    /* Statuskleuren afgeleid */
+    --online:  var(--tbi-groen);
+    --offline: var(--tbi-rood);
+    --warn:    var(--tbi-warmgeel);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @font-face {
+    font-family: 'TBI Sans';
+    src: local('TBI Sans'), local('Segoe UI');
+  }
+
+  body {
+    background: #fff;
+    color: var(--tbi-zwart);
+    /* TBI Sans primair, Verdana fallback voor kantoor */
+    font-family: 'TBI Sans', 'Segoe UI', Verdana, sans-serif;
+    letter-spacing: 0.01em;
+    min-height: 100vh;
+  }
+
+  /* ──── HEADER — layout principe: twee schuivende vlakken ─────── */
+  .page-header {
+    position: relative;
+    background: var(--tbi-paars);
+    color: #fff;
+    padding: 32px 48px 56px;
+    overflow: hidden;
+  }
+  /* Groen accent-vlak vanuit rechter onderhoek (schuivend vlak 2) */
+  .page-header::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    height: 16px;
+    background: var(--tbi-groen);
+  }
+  /* Klein paars vierkantje als accent-dot (huisstijl) */
+  .page-header::before {
+    content: '';
+    position: absolute;
+    left: 48px;
+    bottom: 8px;
+    width: 10px;
+    height: 10px;
+    background: var(--tbi-groen);
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .brand-logo {
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    color: var(--tbi-groen);
+    background: rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    border-radius: 3px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  h1 span { color: var(--tbi-groen); font-weight: 400; }
+  .subtitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tbi-groen);
+    letter-spacing: 0.14em;
+    margin-top: 6px;
+  }
+  #last-updated {
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.03em;
+  }
+
+  /* ──── STATS ─────────────────────────────────────────────────── */
+  .stats {
+    display: flex;
+    gap: 2px;
+    background: var(--tbi-lichtgrijs);
+    padding: 0;
+    border-bottom: 1px solid var(--tbi-middengrijs);
+  }
+  .stat {
+    flex: 1;
+    padding: 20px 24px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-val {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--tbi-paars);
+    letter-spacing: 0.01em;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--tbi-koudgrijs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .online-val  { color: var(--tbi-paars); }
+  .offline-val { color: var(--tbi-rood); }
+  .warn-val    { color: var(--tbi-warmgeel); }
+
+  /* ──── TOOLBAR ───────────────────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 20px 48px;
+    flex-wrap: wrap;
+    background: #fff;
+    border-bottom: 1px solid var(--tbi-lichtgrijs);
+  }
+  input[type=search],
+  select {
+    background: #fff;
+    border: 1px solid var(--tbi-middengrijs);
+    color: var(--tbi-zwart);
+    padding: 9px 14px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input[type=search] { width: 260px; }
+  input[type=search]:focus,
+  select:focus { border-color: var(--tbi-paars); }
+  select { cursor: pointer; }
+
+  .btn {
+    background: var(--tbi-paars);
+    color: #fff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn-accent {
+    background: var(--tbi-groen);
+    color: var(--tbi-paars);
+  }
+
+  /* ──── TABLE ─────────────────────────────────────────────────── */
+  .table-wrap {
+    padding: 0 48px 48px;
+    background: #fff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tbi-koudgrijs);
+    border-bottom: 2px solid var(--tbi-paars);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:hover { color: var(--tbi-paars); }
+  tbody tr {
+    border-bottom: 1px solid var(--tbi-lichtgrijs);
+  }
+  tbody tr:hover { background: var(--tbi-lichtgrijs); }
+  td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    color: var(--tbi-zwart);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge-online  {
+    background: var(--tbi-groen);
+    color: var(--tbi-paars);
+  }
+  .badge-offline {
+    background: rgba(242,100,87,0.15);
+    color: var(--tbi-rood);
+  }
+  .badge-app {
+    background: rgba(99,13,128,0.1);
+    color: var(--tbi-paars);
+  }
+
+  .hostname {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12px;
+    color: var(--tbi-zwart);
+  }
+  .version {
+    font-family: 'Cascadia Code', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--tbi-paars);
+  }
+  .ts {
+    font-size: 11px;
+    color: var(--tbi-koudgrijs);
+    white-space: nowrap;
+  }
+
+  #empty {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--tbi-koudgrijs);
+    display: none;
+    font-size: 14px;
+  }
+
+  /* ──── FOOTER ────────────────────────────────────────────────── */
+  footer {
+    border-top: 2px solid var(--tbi-groen);
+    background: var(--tbi-lichtgrijs);
+    padding: 20px 48px;
+    color: var(--tbi-koudgrijs);
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { padding: 24px 20px 40px; }
+    .toolbar, .table-wrap, footer { padding-left: 20px; padding-right: 20px; }
+    .stats { flex-direction: column; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">▸ TBI</div>
+      <div>
+        <h1>Kruiwagen <span>Device Register</span></h1>
+        <div class="subtitle">GITHUB-MANAGED · AUTOMATISCHE SYNCHRONISATIE</div>
+      </div>
+    </div>
+    <div id="last-updated">Laden…</div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat">
+    <span class="stat-val" id="s-total">–</span>
+    <span class="stat-lbl">Totaal devices</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val online-val" id="s-online">–</span>
+    <span class="stat-lbl">Online (&lt;24u)</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val offline-val" id="s-offline">–</span>
+    <span class="stat-lbl">Offline</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val" id="s-version" style="font-size:18px;padding-top:7px">–</span>
+    <span class="stat-lbl">Meest recente versie</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val warn-val" id="s-outdated">–</span>
+    <span class="stat-lbl">Verouderd</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <input type="search" id="search" placeholder="Zoek op naam, bedrijf, versie…">
+  <select id="filter-company">
+    <option value="">Alle bedrijven</option>
+  </select>
+  <select id="filter-status">
+    <option value="">Alle statussen</option>
+    <option value="online">Online</option>
+    <option value="offline">Offline</option>
+  </select>
+  <button class="btn btn-accent" onclick="loadData()">↻ Vernieuwen</button>
+  <button class="btn" onclick="exportCsv()">⬇ Export CSV</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sort('status')">Status</th>
+        <th onclick="sort('hostname')">Hostname</th>
+        <th onclick="sort('company')">Bedrijf</th>
+        <th onclick="sort('appMode')">App</th>
+        <th onclick="sort('version')">Versie</th>
+        <th onclick="sort('lastUpdate')">Laatste update</th>
+        <th onclick="sort('lastSeen')">Laatste contact</th>
+        <th>ZeroTier IP</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty">Geen devices gevonden</div>
+</div>
+
+<footer>
+  <div>TBI Kruiwagen · v2026</div>
+  <div>Auto-refresh elke 5 minuten</div>
+</footer>
+
+<script>
+const REGISTRY_URL =
+  "https://raw.githubusercontent.com/patnl/TBI_kruiwagen/main/registry/devices.json";
+
+let allDevices = [];
+let sortCol = 'lastSeen', sortAsc = false;
+
+async function loadData() {
+  document.getElementById('last-updated').textContent = 'Laden…';
+  try {
+    const r = await fetch(REGISTRY_URL + '?t=' + Date.now());
+    const d = await r.json();
+    allDevices = d.devices || [];
+    document.getElementById('last-updated').textContent =
+      'Bijgewerkt: ' + (d.lastUpdated ? fmtDate(d.lastUpdated) : '–');
+    buildFilters();
+    renderStats();
+    renderTable();
+  } catch(e) {
+    document.getElementById('last-updated').textContent = 'Fout bij laden — ' + e.message;
+  }
+}
+
+function isOnline(device) {
+  if (!device.lastSeen) return false;
+  return (Date.now() - new Date(device.lastSeen).getTime()) < 24*60*60*1000;
+}
+
+function renderStats() {
+  const online = allDevices.filter(isOnline).length;
+  const latestVer = allDevices.map(d => d.version||'').sort().reverse()[0] || '–';
+  const outdated  = allDevices.filter(d => d.version && d.version !== latestVer).length;
+  document.getElementById('s-total').textContent    = allDevices.length;
+  document.getElementById('s-online').textContent   = online;
+  document.getElementById('s-offline').textContent  = allDevices.length - online;
+  document.getElementById('s-version').textContent  = latestVer;
+  document.getElementById('s-outdated').textContent = outdated;
+}
+
+function buildFilters() {
+  const sel = document.getElementById('filter-company');
+  const companies = [...new Set(allDevices.map(d => d.company).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Alle bedrijven</option>' +
+    companies.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function getFiltered() {
+  const q  = document.getElementById('search').value.toLowerCase();
+  const co = document.getElementById('filter-company').value;
+  const st = document.getElementById('filter-status').value;
+  return allDevices.filter(d => {
+    const text = [d.hostname,d.company,d.version,d.appMode].join(' ').toLowerCase();
+    if (q && !text.includes(q)) return false;
+    if (co && d.company !== co) return false;
+    if (st === 'online'  && !isOnline(d)) return false;
+    if (st === 'offline' &&  isOnline(d)) return false;
+    return true;
+  }).sort((a, b) => {
+    const av = (a[sortCol]||'').toString();
+    const bv = (b[sortCol]||'').toString();
+    return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+}
+
+function renderTable() {
+  const rows = getFiltered();
+  const tbody = document.getElementById('tbody');
+  const empty = document.getElementById('empty');
+  if (!rows.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = rows.map(d => {
+    const online = isOnline(d);
+    return `<tr>
+      <td><span class="badge ${online?'badge-online':'badge-offline'}">
+        ${online?'● Online':'○ Offline'}</span></td>
+      <td class="hostname">${d.hostname||'–'}</td>
+      <td>${d.company||'–'}</td>
+      <td><span class="badge badge-app">${d.appMode||'browser'}</span></td>
+      <td class="version">${d.version||'–'}</td>
+      <td class="ts">${d.lastUpdate ? fmtDate(d.lastUpdate) : '–'}</td>
+      <td class="ts">${d.lastSeen  ? fmtDate(d.lastSeen)  : '–'}</td>
+      <td class="hostname" style="font-size:11px">${d.ipZerotier||'–'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function sort(col) {
+  if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
+  renderTable();
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('nl-NL') + ' ' +
+         d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+}
+
+function exportCsv() {
+  const rows = getFiltered();
+  const header = 'hostname,bedrijf,app,versie,laatste_update,laatste_contact,ip_zerotier,status';
+  const csv = [header, ...rows.map(d =>
+    [d.hostname,d.company,d.appMode,d.version,d.lastUpdate,d.lastSeen,d.ipZerotier,isOnline(d)?'online':'offline']
+    .map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')
+  )].join('\n');
+  const a = Object.assign(document.createElement('a'),{
+    href: 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv),
+    download: 'tbi-kruiwagen-devices.csv'
+  });
+  a.click();
+}
+
+document.getElementById('search').addEventListener('input', renderTable);
+document.getElementById('filter-company').addEventListener('change', renderTable);
+document.getElementById('filter-status').addEventListener('change', renderTable);
+
+loadData();
+setInterval(loadData, 5*60*1000);
+</script>
+</body>
+</html>

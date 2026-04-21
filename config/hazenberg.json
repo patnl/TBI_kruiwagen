@@ -1,0 +1,36 @@
+{
+  "displayName": "Hazenberg Bouw",
+  "computerNamePrefix": "HAZ-KIOSK",
+  "huisstijl": "tbi",
+  "appMode": "dalux",
+  "kioskUser": {
+    "username": "kioskgebruiker",
+    "password": "Wijzig-2025!",
+    "fullName": "Hazenberg Bouw Kiosk",
+    "screenTimeoutMinutes": 0
+  },
+  "dalux": {
+    "forceReinstall": false,
+    "projectCode": "",
+    "installerUrl": ""
+  },
+  "wifi": [
+    {
+      "ssid": "TODO-VUL-ECHTE-SSID-IN",
+      "primary": true,
+      "_comment": "Pas SSID aan naar werkelijke bedrijfs-WiFi. Wachtwoord wordt bij setup gevraagd en lokaal versleuteld opgeslagen."
+    }
+  ],
+  "remoteAccess": {
+    "adminUser": "tbi-remote-admin",
+    "adminPassword": "Wijzig-Admin-2025!",
+    "zerotier": {
+      "enabled": true,
+      "networkId": "565799d8f60b4596"
+    },
+    "teamviewer": {
+      "enabled": false,
+      "assignmentId": ""
+    }
+  }
+}

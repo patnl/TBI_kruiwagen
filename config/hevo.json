@@ -1,0 +1,41 @@
+{
+  "displayName": "HEVO",
+  "computerNamePrefix": "HEVO-KIOSK",
+  "huisstijl": "eigen",
+  "appMode": "browser",
+  "kioskUser": {
+    "username": "kioskgebruiker",
+    "password": "Wijzig-2025!",
+    "fullName": "HEVO Kiosk",
+    "screenTimeoutMinutes": 30
+  },
+  "browser": {
+    "fullscreen": true,
+    "urls": [
+      "https://www.hevo.nl"
+    ],
+    "urlWhitelist": [
+      "https://www.hevo.nl",
+      "https://*.microsoftonline.com"
+    ]
+  },
+  "wifi": [
+    {
+      "ssid": "TODO-VUL-ECHTE-SSID-IN",
+      "primary": true,
+      "_comment": "Pas SSID aan naar werkelijke bedrijfs-WiFi. Wachtwoord wordt bij setup gevraagd en lokaal versleuteld opgeslagen."
+    }
+  ],
+  "remoteAccess": {
+    "adminUser": "tbi-remote-admin",
+    "adminPassword": "Wijzig-Admin-2025!",
+    "zerotier": {
+      "enabled": true,
+      "networkId": "565799d8f60b4596"
+    },
+    "teamviewer": {
+      "enabled": false,
+      "assignmentId": ""
+    }
+  }
+}

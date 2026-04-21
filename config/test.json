@@ -1,0 +1,43 @@
+{
+  "displayName": "TEST — Jeroen's test-omgeving",
+  "computerNamePrefix": "TEST-KIOSK",
+  "huisstijl": "tbi",
+  "appMode": "browser",
+  "kioskUser": {
+    "username": "kioskgebruiker",
+    "password": "Wijzig-2025!",
+    "fullName": "Test Kiosk",
+    "screenTimeoutMinutes": 30
+  },
+  "browser": {
+    "fullscreen": false,
+    "urls": [
+      "https://www.tbi.nl",
+      "https://acc.autodesk.com"
+    ],
+    "urlWhitelist": [
+      "https://*.tbi.nl",
+      "https://*.autodesk.com",
+      "https://*.microsoftonline.com"
+    ]
+  },
+  "wifi": [
+    {
+      "ssid": "Mobile1",
+      "hidden": true,
+      "primary": true
+    }
+  ],
+  "remoteAccess": {
+    "adminUser": "tbi-remote-admin",
+    "adminPassword": "Wijzig-Admin-2025!",
+    "zerotier": {
+      "enabled": true,
+      "networkId": "565799d8f60b4596"
+    },
+    "teamviewer": {
+      "enabled": false,
+      "assignmentId": ""
+    }
+  }
+}
