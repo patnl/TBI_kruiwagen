@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Geheimen / lokaal
+*.enc
+*.pat
+.ghpat
+credentials.json
+secrets.json
+
+# Grote binaries horen niet in Git
+*.exe
+*.msi
+*.iso
+*.zip
+!assets/**/*.zip   # assets uitzonderen als nodig
+
+# Logs
+*.log
+logs/
+
+# Tijdelijke bestanden
+*.tmp
+*.bak
+*_backup
+"Nieuw - Tekstdocument*"
+
+# WiFi wachtwoorden - nooit naar Git
+.wifi-secrets.json
+wifi-secrets*

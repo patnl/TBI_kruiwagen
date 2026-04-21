@@ -1,0 +1,4 @@
+# TeamViewer-configuratie.
+# Plaats hier TVSettings.tvopt uit de oude repo.
+# Deze wordt door modules/remote.ps1 opgehaald als
+# teamviewer.enabled = true in de bedrijfsconfig.

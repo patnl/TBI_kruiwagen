@@ -1,0 +1,6 @@
+# WiFi XML-profielen horen hier.
+# Exporteer vanaf een werkende PC:
+#   netsh wlan export profile name="Netwerknaam" folder=C:\wifi key=clear
+# Kopieer het resulterende XML-bestand naar deze map.
+# Verwijs in config/[bedrijf].json naar het bestand via:
+#   "profileXmlPath": "assets/wifi/bestandsnaam.xml"
