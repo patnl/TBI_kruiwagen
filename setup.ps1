@@ -56,7 +56,7 @@ $company = $env:KIOSK_COMPANY
 
 if (-not $company -and $isUpdateOnly) {
     # Bootstrap: lees opgeslagen bedrijfscode
-    $company = (Get-Content "C:\KioskSetup\company.txt" -ErrorAction SilentlyContinue)?.Trim()
+    $company = ([string](Get-Content "C:\KioskSetup\company.txt" -ErrorAction SilentlyContinue)).Trim()
 }
 
 if (-not $company) {

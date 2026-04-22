@@ -53,7 +53,7 @@ $timer.Start()
 
 function Show-AdminPinDialog {
     Add-Type -AssemblyName PresentationFramework
-    [xml]$xaml = @'
+    [xml]$xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Topmost="True" WindowStartupLocation="CenterScreen"
@@ -85,7 +85,7 @@ function Show-AdminPinDialog {
     </StackPanel>
   </Border>
 </Window>
-'@
+"@
     $r = [System.Xml.XmlNodeReader]::new($xaml)
     $w = [Windows.Markup.XamlReader]::Load($r)
     $pinBox   = $w.FindName("pinBox")
@@ -126,10 +126,10 @@ function Show-AdminPinDialog {
     $menuScript = @"
 #Requires -RunAsAdministrator
 Set-ExecutionPolicy Bypass -Scope Process -Force
-`$company = (Get-Content 'C:\KioskSetup\company.txt' -ErrorAction SilentlyContinue)?.Trim()
-`$baseUrl  = (Get-Content 'C:\KioskSetup\baseurl.txt' -ErrorAction SilentlyContinue)?.Trim()
-`$org      = (Get-Content 'C:\KioskSetup\org.txt'     -ErrorAction SilentlyContinue)?.Trim()
-`$repo     = (Get-Content 'C:\KioskSetup\repo.txt'    -ErrorAction SilentlyContinue)?.Trim()
+`$company = ([string](Get-Content 'C:\KioskSetup\company.txt' -ErrorAction SilentlyContinue)).Trim()
+`$baseUrl  = ([string](Get-Content 'C:\KioskSetup\baseurl.txt' -ErrorAction SilentlyContinue)).Trim()
+`$org      = ([string](Get-Content 'C:\KioskSetup\org.txt'     -ErrorAction SilentlyContinue)).Trim()
+`$repo     = ([string](Get-Content 'C:\KioskSetup\repo.txt'    -ErrorAction SilentlyContinue)).Trim()
 
 # Laad wizard module
 `$wiz = Invoke-RestMethod "`$baseUrl/modules/wizard.ps1" -ErrorAction SilentlyContinue
