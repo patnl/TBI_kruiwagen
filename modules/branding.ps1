@@ -49,10 +49,24 @@ function Set-KioskBranding {
 
     # ── 3. COMPUTERNAAM INSTELLEN ────────────────────────────────────────────
     if ($Config.computerNamePrefix) {
-        $suffix   = -join ((65..90) | Get-Random -Count 4 | ForEach-Object { [char]$_ })
-        $newName  = "$($Config.computerNamePrefix)-$suffix"
+        $ctbPath = "C:\KioskSetup\ctbnumber.txt"
+        if (Test-Path $ctbPath) {
+            $ctb = ([string](Get-Content $ctbPath -ErrorAction SilentlyContinue)).Trim().ToUpper() -replace '[^A-Z0-9\-]', ''
+        } else {
+            $ctb = $null
+        }
+
+        if ($ctb) {
+            $newName = "$($Config.computerNamePrefix)-$ctb"
+            # Max 15 tekens (NetBIOS-limiet)
+            if ($newName.Length -gt 15) { $newName = $newName.Substring(0, 15) }
+        } else {
+            $suffix  = -join ((65..90) | Get-Random -Count 4 | ForEach-Object { [char]$_ })
+            $newName = "$($Config.computerNamePrefix)-$suffix"
+        }
+
         Rename-Computer -NewName $newName -Force -ErrorAction SilentlyContinue
-        Write-Log "Computernaam ingesteld: $newName"
+        Write-Log "Computernaam ingesteld: $newName$(if ($ctb) { ' (CTB: ' + $ctb + ')' })"
     }
 
     # ── 4. TAAKBALK & STARTMENU OPSCHONEN ────────────────────────────────────

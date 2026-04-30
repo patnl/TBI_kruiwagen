@@ -12,11 +12,14 @@
   "browser": {
     "fullscreen": true,
     "urls": [
-      "https://www.voorbij.nl"
+      "https://www.voorbij.nl",
+      "https://acc.autodesk.eu/home"
     ],
     "urlWhitelist": [
       "https://www.voorbij.nl",
-      "https://*.microsoftonline.com"
+      "https://*.microsoftonline.com",
+      "https://acc.autodesk.eu",
+      "https://*.autodesk.eu"
     ]
   },
   "wifi": [
@@ -37,5 +40,11 @@
       "enabled": false,
       "assignmentId": ""
     }
+  },
+  "powerSchedule": {
+    "sleepEnabled": true,
+    "sleepStart": "22:00",
+    "sleepEnd": "06:00",
+    "comment": "Slaapstand alleen actief buiten werktijden. Pas aan per bedrijf indien nodig."
   }
 }

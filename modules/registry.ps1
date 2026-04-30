@@ -86,14 +86,14 @@ function Register-Device {
     $ztIp = ""
     try {
         $ztInfo = Invoke-RestMethod "http://localhost:9993/status" -ErrorAction SilentlyContinue
-        if ($ztInfo) { $ztIp = ($ztInfo.address ?? "") }
+        if ($ztInfo) { $ztIp = $(if ($ztInfo.address -ne $null) { $ztInfo.address } else { "" }) }
     } catch {}
 
     $entry = [pscustomobject]@{
         hostname    = $env:COMPUTERNAME
-        company     = ($Config.displayName ?? "Onbekend")
+        company     = $(if ($Config.displayName) { $Config.displayName } else { "Onbekend" })
         companyCode = ($Config.computerNamePrefix -replace "-KIOSK","").ToLower()
-        appMode     = ($Config.appMode ?? "browser")
+        appMode     = $(if ($Config.appMode) { $Config.appMode } else { "browser" })
         version     = $Version
         lastSeen    = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
         lastUpdate  = if ($env:KIOSK_UPDATE_ONLY -eq "1") { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") } else { "Initiële setup" }
@@ -108,7 +108,7 @@ function Register-Device {
             $reg = Read-GHRegistry -Org $GithubOrg -Repo $GithubRepo -Pat $pat
 
             # Bestaand device bijwerken of nieuw toevoegen
-            $devices = [System.Collections.Generic.List[object]]($reg.data.devices ?? @())
+            $devices = [System.Collections.Generic.List[object]]$(if ($reg.data.devices -ne $null) { $reg.data.devices } else { @() })
             $existing = $devices | Where-Object { $_.hostname -eq $env:COMPUTERNAME }
             if ($existing) {
                 $existing.version   = $entry.version

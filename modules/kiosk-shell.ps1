@@ -23,7 +23,7 @@ function Set-KioskShell {
         default {
             # Vrij te configureren — pad direct in config opgeven
             $appExe  = $Config.customApp.exePath
-            $appArgs = $Config.customApp.arguments ?? ""
+            $appArgs = $(if ($Config.customApp.arguments -ne $null) { $Config.customApp.arguments } else { "" })
             Write-Log "Kiosk app: custom ($appExe)"
         }
     }

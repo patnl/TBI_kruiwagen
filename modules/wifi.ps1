@@ -121,8 +121,8 @@ function Sync-WifiProfiles {
 
             $xml = Build-WifiXml -Ssid $profile.ssid `
                                  -Password $password `
-                                 -Security ($profile.security ?? "WPA2PSK") `
-                                 -Hidden   ($profile.hidden   ?? $false)
+                                 -Security $(if ($profile.security) { $profile.security } else { "WPA2PSK" }) `
+                                 -Hidden   $(if ($profile.hidden -ne $null) { $profile.hidden } else { $false })
             $xml | Out-File -FilePath $xmlPath -Encoding UTF8
             Push-WifiXml -XmlPath $xmlPath -Ssid $profile.ssid -KeepFile $false
         }

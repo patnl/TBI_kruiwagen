@@ -13,12 +13,15 @@
     "fullscreen": false,
     "urls": [
       "https://www.tbi.nl",
-      "https://acc.autodesk.com"
+      "https://acc.autodesk.com",
+      "https://acc.autodesk.eu/home"
     ],
     "urlWhitelist": [
       "https://*.tbi.nl",
       "https://*.autodesk.com",
-      "https://*.microsoftonline.com"
+      "https://*.microsoftonline.com",
+      "https://acc.autodesk.eu",
+      "https://*.autodesk.eu"
     ]
   },
   "wifi": [
@@ -39,5 +42,11 @@
       "enabled": false,
       "assignmentId": ""
     }
+  },
+  "powerSchedule": {
+    "sleepEnabled": true,
+    "sleepStart": "22:00",
+    "sleepEnd": "06:00",
+    "comment": "Slaapstand alleen actief buiten werktijden. Pas aan per bedrijf indien nodig."
   }
 }

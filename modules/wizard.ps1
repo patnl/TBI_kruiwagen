@@ -83,7 +83,7 @@ function Invoke-SetupWizard {
             # Laad displayName uit elke variant
             try {
                 $vCfg  = Invoke-RestMethod "$BaseUrl/config/$v" -ErrorAction SilentlyContinue
-                $label = if ($vCfg.displayName) { "$($vCfg.displayName) — $($vCfg.appMode ?? 'browser')" } else { $vName }
+                $label = if ($vCfg.displayName) { "$($vCfg.displayName) — $(if ($vCfg.appMode) { $vCfg.appMode } else { 'browser' })" } else { $vName }
             } catch { $label = $vName }
             Write-Host "    [$vi] $label" -ForegroundColor White
             $variantMap["$vi"] = $vName
@@ -91,13 +91,31 @@ function Invoke-SetupWizard {
         }
         Write-Host ""
         $vChoice = Read-Host "  Kies een nummer"
-        $selectedConfig = $variantMap[$vChoice.Trim()] ?? $baseCompany
+        $selectedConfig = $(if ($variantMap[$vChoice.Trim()] -ne $null) { $variantMap[$vChoice.Trim()] } else { $baseCompany })
     } elseif ($variants.Count -eq 0) {
         $selectedConfig = $baseCompany
     }
 
     Write-Host ""
     Write-Host "  ✔ Geselecteerd: $selectedConfig" -ForegroundColor Green
+
+    # ── STAP 3B: CTB / SERVICENOW NUMMER ─────────────────────────────────────
+    Write-Host ""
+    Write-Host "  ┌─ CTB / SERVICENOW NUMMER (optioneel) ────────────────────┐" -ForegroundColor White
+    Write-Host "  Heeft deze pc al een assetnummer uit CTB of ServiceNow?" -ForegroundColor Gray
+    Write-Host "  Dit nummer wordt verwerkt in de computernaam." -ForegroundColor Gray
+    Write-Host "  Laat leeg om een willekeurig suffix te gebruiken." -ForegroundColor Gray
+    Write-Host ""
+    $ctbInput = Read-Host "  CTB/ServiceNow nummer (bijv. CI0012345 of leeg)"
+    $ctbNumber = $ctbInput.Trim().ToUpper() -replace '[^A-Z0-9\-]', ''
+
+    if ($ctbNumber) {
+        Write-Host "  ✔ Assetnummer opgeslagen: $ctbNumber" -ForegroundColor Green
+        $ctbNumber | Out-File "C:\KioskSetup\ctbnumber.txt" -Encoding UTF8
+    } else {
+        Write-Host "  Overgeslagen — willekeurig suffix wordt gebruikt" -ForegroundColor Gray
+        if (Test-Path "C:\KioskSetup\ctbnumber.txt") { Remove-Item "C:\KioskSetup\ctbnumber.txt" }
+    }
 
     # ── STAP 4: ADMIN PIN INSTELLEN ───────────────────────────────────────────
     Write-Host ""

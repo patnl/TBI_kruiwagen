@@ -17,7 +17,7 @@ function Show-KioskSplash {
     $tekst   = $kleuren.Tekst
 
     # Logo pad (vanuit C:\KioskSetup\logos\ als die gedownload is)
-    $logoLocal = "C:\KioskSetup\logos\$($Config.huisstijl ?? 'tbi')-wit.png"
+    $logoLocal = "C:\KioskSetup\logos\$($(if ($Config.huisstijl) { $Config.huisstijl } else { 'tbi' }))-wit.png"
     if (-not (Test-Path $logoLocal)) {
         # Fallback op TBI logo
         $logoLocal = "C:\KioskSetup\logos\tbi-wit.png"
@@ -264,7 +264,7 @@ if (Test-Path `$logoPath) {
 
     $scriptPath = "C:\KioskSetup\splash.ps1"
     $splashScript | Out-File -FilePath $scriptPath -Encoding UTF8
-    Write-Log "Splash script geschreven met huisstijl: $($Config.huisstijl ?? 'tbi')"
+    Write-Log "Splash script geschreven met huisstijl: $($(if ($Config.huisstijl) { $Config.huisstijl } else { 'tbi' }))"
 }
 
 function Register-SplashTask {
@@ -323,7 +323,7 @@ function Sync-LogoAssets {
     $code = ($Config.computerNamePrefix -replace "-KIOSK","").ToLower()
     $logos += "$code-wit.png"
 
-    $baseUrl = (Get-Content "C:\KioskSetup\baseurl.txt" -ErrorAction SilentlyContinue)?.Trim()
+    $baseUrl = ([string](Get-Content "C:\KioskSetup\baseurl.txt" -ErrorAction SilentlyContinue)).Trim()
     if (-not $baseUrl) { return }
 
     foreach ($logo in $logos) {

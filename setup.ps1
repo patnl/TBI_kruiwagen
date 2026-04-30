@@ -14,9 +14,36 @@ $GITHUB_REPO   = "TBI_kruiwagen"
 $GITHUB_BRANCH = "main"
 $BASE_URL      = "https://raw.githubusercontent.com/$GITHUB_ORG/$GITHUB_REPO/$GITHUB_BRANCH"
 
+# Vaste Gist-URL — wijzigt nooit, ook niet als de repo verplaatst
+# Maak deze Gist éénmalig aan op github.com/gist en zet de URL hieronder
+$REDIRECT_GIST_URL = "https://gist.githubusercontent.com/patnl/5b15d822bbfd79c915bf22494831e8aa/raw/redirect.json"
+
+# ── WINDOWS EDITIE CONTROLE ───────────────────────────────────────────────────
+$winEdition = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").EditionID
+$winBuild   = [int](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").CurrentBuildNumber
+$winVersion = if ($winBuild -ge 22000) { "Windows 11" } else { "Windows 10" }
+
+if ($winEdition -like "*Core*" -or $winEdition -like "*Home*") {
+    Write-Host ""
+    Write-Host "  WAARSCHUWING: $winVersion Home gedetecteerd ($winEdition)" -ForegroundColor Yellow
+    Write-Host "  Shell Launcher niet beschikbaar -- logon-taak wordt als fallback gebruikt." -ForegroundColor Yellow
+    Write-Host "  De kiosk werkt normaal, maar Pro/Enterprise geeft betere isolatie." -ForegroundColor Yellow
+    Write-Host ""
+}
+
+Write-Log "Besturingssysteem: $winVersion (build $winBuild, editie $winEdition)"
+
 # ── LOGGING ───────────────────────────────────────────────────────────────────
 $LogFile = "C:\KioskSetup\setup_$(Get-Date -f 'yyyyMMdd_HHmmss').log"
 New-Item -ItemType Directory -Force -Path "C:\KioskSetup" | Out-Null
+
+# Sla de vaste Gist-URL op als aanwijzer voor bootstrap
+if ($REDIRECT_GIST_URL -notlike "*GIST_ID_HIER*") {
+    $REDIRECT_GIST_URL | Out-File "C:\KioskSetup\pointer.txt" -Encoding UTF8
+    Write-Log "Redirect-pointer opgeslagen: $REDIRECT_GIST_URL"
+} else {
+    Write-Log "Let op: REDIRECT_GIST_URL nog niet ingesteld in setup.ps1 — redirect-check uitgeschakeld" "WARN"
+}
 
 function Write-Log {
     param([string]$Msg, [string]$Level = "INFO")
@@ -38,7 +65,7 @@ $isFirstRun   = -not (Test-Path "C:\KioskSetup\company.txt")
 
 # ── ALLE MODULES LADEN ────────────────────────────────────────────────────────
 Write-Log "Modules laden van GitHub..."
-$allModules = @("huisstijl","accounts","wifi","browser","branding","remote","kiosk-shell","splash","registry","wizard","admin-trigger","dalux")
+$allModules = @("huisstijl","accounts","wifi","browser","branding","remote","kiosk-shell","splash","registry","wizard","admin-trigger","dalux","updates","power")
 foreach ($module in $allModules) {
     try {
         $src  = Invoke-RestMethod -Uri "$BASE_URL/modules/$module.ps1" -ErrorAction Stop
@@ -89,6 +116,8 @@ Write-Log "═══ $(if ($isUpdateOnly) {'UPDATE'} else {'INITIËLE SETUP'}): 
 Invoke-Step "TBI branding toepassen"        { Set-KioskBranding  -Config $cfg -BaseUrl $BASE_URL }
 Invoke-Step "WiFi-profielen synchroniseren" { Sync-WifiProfiles  -Config $cfg -BaseUrl $BASE_URL }
 Invoke-Step "Kiosk shell-modus instellen"   { Set-KioskShell     -Config $cfg }
+Invoke-Step "Slaapstand-schema instellen"   { Set-PowerSchedule  -Config $cfg }
+Invoke-Step "Automatische updates instellen" { Set-AutoUpdate     -Config $cfg }
 
 switch ($appMode) {
     "dalux"   { Invoke-Step "Dalux installeren/updaten" { Install-DaluxApp -Config $cfg } }
@@ -106,7 +135,8 @@ Invoke-Step "Device registreren in GitHub" {
 
 # ── STAPPEN ALLEEN BIJ INITIËLE SETUP ────────────────────────────────────────
 if (-not $isUpdateOnly) {
-    Invoke-Step "Kiosk-account aanmaken"   { Set-KioskAccount -Config $cfg }
+    Invoke-Step "Kiosk-account aanmaken"   { Set-KioskAccount    -Config $cfg }
+    Invoke-Step "Overtollige accounts opruimen" { Remove-StaleAccounts -Config $cfg }
     Invoke-Step "Remote access inrichten"  { Set-RemoteAccess -Config $cfg }
     Invoke-Step "Admin-trigger instellen"  {
         Register-AdminTrigger -Config $cfg -GithubOrg $GITHUB_ORG `

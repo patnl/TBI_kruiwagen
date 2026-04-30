@@ -1,0 +1,9 @@
+# Deze map bevat reinstall-signalen per machine.
+# Maak een leeg bestand aan met de computernaam om een volledige herinstallatie te triggeren.
+#
+# Voorbeelden:
+#   reinstall/TBI-KIOSK-ABCD     → herinstallatie voor machine TBI-KIOSK-ABCD
+#   reinstall/ALL                → herinstallatie voor ALLE kiosk-machines
+#
+# Na herinstallatie verwijdert de machine zelf zijn signaalbestand via de GitHub API (PAT vereist).
+# Zonder PAT blijft het bestand staan maar wordt de reinstall niet herhaald (vlag lokaal opgeslagen).
